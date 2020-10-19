@@ -1,28 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using EmployeeWebApplication.Models.EnumTypes;
 
 namespace EmployeeWebApplication.Models
 {
     public class Employee
     {
-        /* Class used to model the employee records 
- * EmployeeID -> int
- * firstName -> string 
- * lastName -> string
- * ssn -> string
- * phoneNumber -> string
- * DOB -> dateTimeString
- * Title -> String
- * Department -> Enum Type
- * Gender -> string
- * Wage -> float 
- * Start Date (Date of Employment) -> dateTimeString
- * CurrentAddress -> string 
- * PaymentInformation -> string
-*/
+        public int EmployeeID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string SSN { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public string Title { get; set; }
+        public EmployeeTypesEnum employeeType { get; set; }
+        public GenderTypes gender { get; set; }
+        public float Wage { get; set; }
+        public DateTime StartDate { get; set; }
+        public string HomeAddress { get; set; }
+        public string PaymentInformation { get; set; }
     }
 }
