@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,12 +8,12 @@ namespace EmployeeWebApplication.Models
 {
     public class EmployeeExpense
     {
-        /* This model represents the EmployeeExpense Table
-        * Reimbursements -> float 
-        * Company Credit Card information
-        *  Card Number, -> string
-        *  card status, -> bool (true -> enabled || false -> disabled)
-        *  current balance, -> float
-        */
+        [ForeignKey("Employee")]
+        public int ID { get; set; }
+
+        public float Reimbursements { get; set; }
+        public string CardNumber { get; set; }
+        public bool IsCardEnabled { get; set; }
+        public float CurrentBalance { get; set; }
     }
 }

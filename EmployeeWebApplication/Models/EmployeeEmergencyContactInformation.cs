@@ -1,5 +1,7 @@
-﻿using System;
+﻿using EmployeeWebApplication.Models.EnumTypes;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,24 +9,13 @@ namespace EmployeeWebApplication.Models
 {
     public class EmployeeEmergencyContactInformation
     {
-        /* Class used to model the EmergencyContact information
-        * EmployeeID used as foreign key this is how the record will be tied to an employee
-        * Name -> string
-        * Phone -> string
-        * PhoneType -> Enum
-        * Email Address -> string
-        * Relationship to employee
-        *  -> Type Enum
-        *      - Father
-        *      - Mother
-        *      - GrandFather
-        *      - GrandMother
-        *      - Brother
-        *      - Sister
-        *      - Cousin
-        *      - Uncle
-        *      - Aunt
-        *      - Other
-        */
+        [ForeignKey("Employee")]
+        public int ID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string PhoneNumber { get; set; }
+        public PhoneTypeEnum PhoneType { get; set; }
+        public string Email { get; set; }
+        public EmployeeRelationshipEnum employeeRelationship { get; set; }
     }
 }
