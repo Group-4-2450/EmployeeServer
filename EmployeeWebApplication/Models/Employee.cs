@@ -17,7 +17,7 @@ namespace EmployeeWebApplication.Models
         public string Title { get; set; }
         public EmployeeTypesEnum EmployeeType { get; set; }
         public GenderTypes Gender { get; set; }
-        public float Wage { get; set; }
+        public float Wage { get; set; } 
         public DateTime StartDate { get; set; }
         public string HomeAddress { get; set; }
         public string PaymentInformation { get; set; }
