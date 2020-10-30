@@ -1,6 +1,7 @@
-﻿using EmployeeWebApplication.ModelsGenerated.EnumTypes;
+﻿using EmployeeWebApplication.Models.EnumTypes;
 
-namespace EmployeeWebApplication.ModelsGenerated
+
+namespace EmployeeWebApplication.Models
 {
     public partial class EmployeeEmergencyContact
     {
@@ -9,8 +10,8 @@ namespace EmployeeWebApplication.ModelsGenerated
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public PhoneTypeEnum PhoneType { get; set; }
-        public EmployeeRelationshipEnum RelationshipToEmployee { get; set; }
+        public PhoneTypeEnum phone_type { get; set; }
+        public EmployeeRelationshipEnum relationship_to_employee { get; set; }
         public virtual Employee IdNavigation { get; set; }
     }
 }

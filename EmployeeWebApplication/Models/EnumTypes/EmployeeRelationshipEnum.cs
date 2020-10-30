@@ -1,4 +1,4 @@
-﻿namespace EmployeeWebApplication.ModelsGenerated.EnumTypes
+﻿namespace EmployeeWebApplication.Models.EnumTypes
 {
     public enum EmployeeRelationshipEnum
     {

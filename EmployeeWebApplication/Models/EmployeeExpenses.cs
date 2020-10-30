@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EmployeeWebApplication.ModelsGenerated
+namespace EmployeeWebApplication.Models
 {
     public partial class EmployeeExpenses
     {
