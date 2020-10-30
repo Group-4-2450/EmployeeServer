@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace EmployeeWebApplication.Models.EnumTypes
+﻿namespace EmployeeWebApplication.ModelsGenerated.EnumTypes
 {
     public enum EmployeeRelationshipEnum
     {

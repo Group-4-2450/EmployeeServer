@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeWebApplication.Interfaces
 {
-    interface IEmployee
+    interface IEmployeeAccessProvider
     {
         Task CreateEmployeeAsync();
         Task GetAllEmployeesAsync();

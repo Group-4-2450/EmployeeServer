@@ -13,7 +13,7 @@ namespace EmployeeWebApplication.Models
         public string LastName { get; set; }
         public string SSN { get; set; }
         public string PhoneNumber { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
         public string Title { get; set; }
         public EmployeeTypesEnum EmployeeType { get; set; }
         public GenderTypes Gender { get; set; }

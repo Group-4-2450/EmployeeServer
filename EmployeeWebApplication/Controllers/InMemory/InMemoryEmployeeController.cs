@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeWebApplication.Controllers.InMemory
 {
-    public class InMemoryEmployeeController : IEmployee
+    public class InMemoryEmployeeController : IEmployeeAccessProvider
     {
         public Task CreateEmployeeAsync()
         {
