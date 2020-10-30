@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+    database:
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_USER: EmployeeDBUser
+            POSTGRES_PASSWORD: HelloThere69!
+        volumes:
+            - data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+
+volumes: 
+    data:
