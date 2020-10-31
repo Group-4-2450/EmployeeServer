@@ -43,6 +43,8 @@ namespace EmployeeWebApplication
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            PerformMigrations(app);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -70,5 +72,18 @@ namespace EmployeeWebApplication
                 endpoints.MapRazorPages();
             });
         }
+
+        static void PerformMigrations(IApplicationBuilder app)
+        {
+            using var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+
+            using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+
+            context.Database.Migrate();
+        }
+
+
     }
 }
