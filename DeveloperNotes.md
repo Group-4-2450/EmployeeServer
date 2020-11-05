@@ -16,17 +16,13 @@ The following is an overview and summary of the directories and files included w
 - Areas
 
 - Controllers
-    - This contains the API implementations. There are two different versions of the API, one is found in the subfolder titled "InMemory" which are to be used only for testing.
-
-    - The other version of the API that are not titled InMemory will have networking capabilites. These are the ones that will be called using the following HTTP Verbs GET, POST, UPDATE, DELETE. 
-
-    - The Web version of the API call will also need to be testing using End-To-End tests rather than unit tests.
+    - This contains the API implementations. 
     
     - Further information about the endpoints and how they are to be called can be found in the README.MD.
 
     **Note: The End-To-End tests can be included in the EmployeeWebApplication.Tests project**
 
-- Data
+- Data and Migration
     - This contains information needed for the database connection. Be careful when making changes to these files and reverting changes are going to be hard.
 
 - Interfaces
@@ -62,6 +58,3 @@ The following is an overview and summary of the directories and files included w
     - This is a seperate project included within the EmployeeWebApplication Solution. This project is used only for implementing and running unit tests.
 
 ## Unit Tests
-
-
-## Running
