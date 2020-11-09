@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+
+div.body {
+  display: flex;
+  margin: auto;
+  width: 600px;
+  padding-top: 100px;
+  line-height: 2;
+  /*padding-left: 50px;*/
+}
+button, input
+{
+    margin-left:5px;
+    margin-right:5px;
+}
+
+</style>
+</head>
+<body>
+
+<img alt="Insert Logo Here"><br>
+<!-- add the actual image here-->
+<br>
+
+<div class="body">
+<form class="form-inline">
+    <!-- Send to somewhere, like with: action="/action_page.php" -->
+    <label for="name">First/Last/MI:</label>
+    <input type="text" id="fName" placeholder="Enter first name" size=20 name="fName">
+    <input type="text" id="lName" placeholder="Enter last name" size=20 name="lName">
+    <input type="text" id="mInitial" size=1 name="mInitial">
+    <br>
+    <label for="birth">DOB (mm/dd/yyyy):</label>
+    <input type="date" id="birth" name="birth">
+    <br>
+    <label for="ssn">SSN (*********):</label>
+    <input type="password" id="ssn" name="ssn">
+    <br>
+    <label for="wage">Wage:</label>
+    <input type="number" id="wage" name="wage">
+    <br>
+    <label for="employDate">Date of Employment (mm/dd/yyyy):</label>
+    <input type="date" id="employDate" name="employDate">
+    <br>
+    <label for="address">Address:</label>
+    <input type="text" id="address" name="address">
+    <br>
+    <button type="submit" margin=10px>Save</button>
+</form>
+</div>
+
+</body>
+</html>
