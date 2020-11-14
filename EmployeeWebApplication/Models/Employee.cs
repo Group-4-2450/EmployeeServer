@@ -6,6 +6,9 @@ namespace EmployeeWebApplication.Models
     {
         public int Id { get; set; }
         public int EmployeeId { get; set; }
+
+        //This is used for authorization
+        public string ownerID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Ssn { get; set; }
@@ -18,5 +21,8 @@ namespace EmployeeWebApplication.Models
         public string PaymentInformation { get; set; }
         public employee_position_tpyes employee_position { get; set; }
         public gender_types gender { get; set; }
+
+        //This is used for authorization
+        public PermissionTypes permission { get; set; }
     }
 }
