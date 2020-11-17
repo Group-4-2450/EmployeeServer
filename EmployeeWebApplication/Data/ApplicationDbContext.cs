@@ -4,15 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeWebApplication.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<Employee>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
-
-        public virtual DbSet<Employee> Employee { get; set; }
-        public virtual DbSet<EmployeeEmergencyContact> EmployeeEmergencyContact { get; set; }
-        public virtual DbSet<EmployeeExpenses> EmployeeExpenses { get; set; }
+        public DbSet<EmployeeWebApplication.Models.EmployeeEmergencyContact> EmployeeEmergencyContact { get; set; }
+        public DbSet<EmployeeWebApplication.Models.EmployeeExpenses> EmployeeExpenses { get; set; }
     }
 }

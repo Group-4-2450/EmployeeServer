@@ -6,8 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Migrations\20201022004804_AddedModels.cs" />
-    <Compile Remove="Data\Migrations\20201022004804_AddedModels.Designer.cs" />
+    <Compile Remove="Data\Migrations\**" />
+    <Content Remove="Data\Migrations\**" />
+    <EmbeddedResource Remove="Data\Migrations\**" />
+    <None Remove="Data\Migrations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Data\PostgreSqlContext.cs" />
     <Compile Remove="Data\PostgresSqlDbContextFactory.cs" />
     <Compile Remove="Models\EmployeeEmergencyContactInformation.cs" />
@@ -31,10 +36,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
 </Project>

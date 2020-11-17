@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EmployeeWebApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201114194736_userAuthentication")]
-    partial class userAuthentication
+    [Migration("20201117034841_LinkEmployeeToIdentityUsers")]
+    partial class LinkEmployeeToIdentityUsers
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,6 +40,9 @@ namespace EmployeeWebApplication.Migrations
                     b.Property<string>("HomeAddress")
                         .HasColumnType("text");
 
+                    b.Property<string>("IdentityUserId")
+                        .HasColumnType("text");
+
                     b.Property<string>("LastName")
                         .HasColumnType("text");
 
@@ -65,12 +68,6 @@ namespace EmployeeWebApplication.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("Gender")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ownerID")
-                        .HasColumnType("text");
-
-                    b.Property<int>("permission")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

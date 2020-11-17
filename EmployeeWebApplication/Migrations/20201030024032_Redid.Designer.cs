@@ -28,7 +28,7 @@ namespace EmployeeWebApplication.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Birthdate")
+                    b.Property<string>("BirthDate")
                         .HasColumnType("text");
 
                     b.Property<int>("EmployeeId")
@@ -61,10 +61,10 @@ namespace EmployeeWebApplication.Migrations
                     b.Property<double?>("Wage")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("employee_position")
+                    b.Property<int>("Position")
                         .HasColumnType("integer");
 
-                    b.Property<int>("gender")
+                    b.Property<int>("Gender")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

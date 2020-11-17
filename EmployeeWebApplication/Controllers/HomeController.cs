@@ -1,11 +1,11 @@
-﻿using System;
+﻿using EmployeeWebApplication.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using EmployeeWebApplication.Models;
 
 namespace EmployeeWebApplication.Controllers
 {
@@ -20,12 +20,7 @@ namespace EmployeeWebApplication.Controllers
 
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            return Redirect("/");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

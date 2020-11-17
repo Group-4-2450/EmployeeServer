@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EmployeeWebApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201114194736_userAuthentication")]
-    partial class userAuthentication
+    [Migration("20201117052005_migration-inator3")]
+    partial class migrationinator3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,24 +23,53 @@ namespace EmployeeWebApplication.Migrations
 
             modelBuilder.Entity("EmployeeWebApplication.Models.Employee", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("BirthDate")
+                    b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("integer");
 
                     b.Property<string>("HomeAddress")
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
                     b.Property<string>("PaymentInformation")
@@ -49,33 +78,41 @@ namespace EmployeeWebApplication.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
                     b.Property<string>("Ssn")
                         .HasColumnType("text");
 
-                    b.Property<string>("StartDate")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
+
                     b.Property<double?>("Wage")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("Position")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Gender")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ownerID")
-                        .HasColumnType("text");
-
-                    b.Property<int>("permission")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Employee");
+                    b.HasIndex("NormalizedEmail")
+                        .HasName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("EmployeeWebApplication.Models.EmployeeEmergencyContact", b =>
@@ -88,11 +125,11 @@ namespace EmployeeWebApplication.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("EmployeeId")
                         .HasColumnType("text");
 
-                    b.Property<int?>("IdNavigationId")
-                        .HasColumnType("integer");
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
                         .HasColumnType("text");
@@ -100,15 +137,15 @@ namespace EmployeeWebApplication.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
-                    b.Property<int>("phone_type")
+                    b.Property<int>("PhoneType")
                         .HasColumnType("integer");
 
-                    b.Property<int>("relationship_to_employee")
+                    b.Property<int>("RelationshipToEmployee")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdNavigationId");
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("EmployeeEmergencyContact");
                 });
@@ -129,15 +166,15 @@ namespace EmployeeWebApplication.Migrations
                     b.Property<float>("CurrentBalance")
                         .HasColumnType("real");
 
-                    b.Property<int?>("IdNavigationId")
-                        .HasColumnType("integer");
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("text");
 
                     b.Property<float>("Reimbursement")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdNavigationId");
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("EmployeeExpenses");
                 });
@@ -190,70 +227,6 @@ namespace EmployeeWebApplication.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasName("UserNameIndex");
-
-                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -342,16 +315,16 @@ namespace EmployeeWebApplication.Migrations
 
             modelBuilder.Entity("EmployeeWebApplication.Models.EmployeeEmergencyContact", b =>
                 {
-                    b.HasOne("EmployeeWebApplication.Models.Employee", "IdNavigation")
-                        .WithMany()
-                        .HasForeignKey("IdNavigationId");
+                    b.HasOne("EmployeeWebApplication.Models.Employee", "Employee")
+                        .WithMany("EmergencyContacts")
+                        .HasForeignKey("EmployeeId");
                 });
 
             modelBuilder.Entity("EmployeeWebApplication.Models.EmployeeExpenses", b =>
                 {
-                    b.HasOne("EmployeeWebApplication.Models.Employee", "IdNavigation")
-                        .WithMany()
-                        .HasForeignKey("IdNavigationId");
+                    b.HasOne("EmployeeWebApplication.Models.Employee", "Employee")
+                        .WithMany("Expenses")
+                        .HasForeignKey("EmployeeId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -365,7 +338,7 @@ namespace EmployeeWebApplication.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("EmployeeWebApplication.Models.Employee", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -374,7 +347,7 @@ namespace EmployeeWebApplication.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("EmployeeWebApplication.Models.Employee", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -389,7 +362,7 @@ namespace EmployeeWebApplication.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("EmployeeWebApplication.Models.Employee", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -398,7 +371,7 @@ namespace EmployeeWebApplication.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("EmployeeWebApplication.Models.Employee", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
