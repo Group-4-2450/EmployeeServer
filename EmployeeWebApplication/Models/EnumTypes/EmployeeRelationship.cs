@@ -1,6 +1,6 @@
 ﻿namespace EmployeeWebApplication.Models.EnumTypes
 {
-    public enum EmployeeRelationshipEnum
+    public enum EmployeeRelationship
     {
         Father = 0,
         Mother = 1,

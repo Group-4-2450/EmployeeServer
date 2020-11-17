@@ -1,6 +1,6 @@
 ﻿namespace EmployeeWebApplication.Models.EnumTypes
 {
-    public enum gender_types
+    public enum Gender
     {
         Female = 0,
         Male = 1
