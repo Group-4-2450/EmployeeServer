@@ -15,6 +15,11 @@ namespace EmployeeWebApplication.Data
             await SeedUsersAsync(userManager);
         }
 
+        private static Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+        {
+            return Task.CompletedTask;
+        }
+
         private static async Task SeedUsersAsync(UserManager<Employee> userManager)
         {
             if (await userManager.FindByEmailAsync("admin@example.com") != null)
@@ -37,11 +42,6 @@ namespace EmployeeWebApplication.Data
             {
                 throw new Exception("Failed to seed initial admin user.");
             }
-        }
-
-        private static Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
-        {
-            return Task.CompletedTask;
         }
     }
 }

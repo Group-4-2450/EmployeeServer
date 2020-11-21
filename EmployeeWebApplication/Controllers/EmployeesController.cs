@@ -1,22 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using EmployeeWebApplication.Data;
 using EmployeeWebApplication.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EmployeeWebApplication.Controllers
 {
     public class EmployeesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<EmployeesController> _logger;
 
-        public EmployeesController(ApplicationDbContext context)
+        public EmployeesController(ApplicationDbContext context, ILogger<EmployeesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Employees
@@ -50,19 +51,23 @@ namespace EmployeeWebApplication.Controllers
         }
 
         // POST: Employees/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Ssn,BirthDate,Title,Wage,StartDate,HomeAddress,PaymentInformation,Gender")] Employee employee)
+        public async Task<IActionResult> Create(EmployeeEditViewModel employeeEdits)
         {
             if (ModelState.IsValid)
             {
+                employeeEdits.Id = Guid.NewGuid().ToString();
+
+                var employee = new Employee();
+                employeeEdits.ApplyTo(employee);
+
                 _context.Add(employee);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            return View(employeeEdits);
         }
 
         // GET: Employees/Edit/5
@@ -78,17 +83,15 @@ namespace EmployeeWebApplication.Controllers
             {
                 return NotFound();
             }
-            return View(employee);
+            return View(new EmployeeEditViewModel(employee));
         }
 
         // POST: Employees/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,Ssn,BirthDate,Title,Wage,StartDate,HomeAddress,PaymentInformation,Gender")] Employee employee)
+        public async Task<IActionResult> Edit(string id, EmployeeEditViewModel employeeEdits)
         {
-            if (id != employee.Id)
+            if (id != employeeEdits.Id)
             {
                 return NotFound();
             }
@@ -97,12 +100,15 @@ namespace EmployeeWebApplication.Controllers
             {
                 try
                 {
+                    var employee = await _context.Users.FindAsync(id);
+                    employeeEdits.ApplyTo(employee);
+
                     _context.Update(employee);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeExists(employee.Id))
+                    if (!EmployeeExists(employeeEdits.Id))
                     {
                         return NotFound();
                     }
@@ -113,7 +119,8 @@ namespace EmployeeWebApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+
+            return View(employeeEdits);
         }
 
         // GET: Employees/Delete/5
