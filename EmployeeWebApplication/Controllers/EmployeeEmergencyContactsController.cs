@@ -19,22 +19,21 @@ namespace EmployeeWebApplication.Controllers
             _context = context;
         }
 
-        // GET: EmployeeEmergencyContacts
-        public async Task<IActionResult> Index()
+        [Route("Employees/Details/{employeeId:guid}/EmergencyContacts")]
+        public async Task<IActionResult> Index(string employeeId)
         {
-            return View(await _context.EmployeeEmergencyContact.ToListAsync());
+            var emergencyContacts = await _context.EmployeeEmergencyContact
+                .Where(contact => contact.EmployeeId == employeeId)
+                .ToListAsync();
+
+            ViewBag.EmployeeId = employeeId;
+            return View(emergencyContacts);
         }
 
-        // GET: EmployeeEmergencyContacts/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [Route("Employees/Details/{employeeId:guid}/EmergencyContacts/Details/{emergencyContactId:int}")]
+        public async Task<IActionResult> Details(string employeeId, int emergencyContactId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var employeeEmergencyContact = await _context.EmployeeEmergencyContact
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var employeeEmergencyContact = await LoadEmployeeEmergencyContactAsync(employeeId, emergencyContactId);
             if (employeeEmergencyContact == null)
             {
                 return NotFound();
@@ -43,37 +42,33 @@ namespace EmployeeWebApplication.Controllers
             return View(employeeEmergencyContact);
         }
 
-        // GET: EmployeeEmergencyContacts/Create
-        public IActionResult Create()
+        [Route("Employees/Details/{employeeId:guid}/EmergencyContacts/Create")]
+        public IActionResult Create(string employeeId)
         {
             return View();
         }
 
-        // POST: EmployeeEmergencyContacts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,PhoneNumber,Email,PhoneType,RelationshipToEmployee")] EmployeeEmergencyContact employeeEmergencyContact)
+        [Route("Employees/Details/{employeeId:guid}/EmergencyContacts/Create")]
+        public async Task<IActionResult> Create(string employeeId, [Bind("Id,EmployeeId,FirstName,LastName,PhoneNumber,Email,PhoneType,RelationshipToEmployee")] EmployeeEmergencyContact employeeEmergencyContact)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(employeeEmergencyContact);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    employeeId
+                });
             }
             return View(employeeEmergencyContact);
         }
 
-        // GET: EmployeeEmergencyContacts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [Route("Employees/Details/{employeeId:guid}/EmergencyContacts/Edit/{emergencyContactId:int}")]
+        public async Task<IActionResult> Edit(string employeeId, int emergencyContactId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var employeeEmergencyContact = await _context.EmployeeEmergencyContact.FindAsync(id);
+            var employeeEmergencyContact = await LoadEmployeeEmergencyContactAsync(employeeId, emergencyContactId);
             if (employeeEmergencyContact == null)
             {
                 return NotFound();
@@ -81,14 +76,12 @@ namespace EmployeeWebApplication.Controllers
             return View(employeeEmergencyContact);
         }
 
-        // POST: EmployeeEmergencyContacts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,PhoneNumber,Email,PhoneType,RelationshipToEmployee")] EmployeeEmergencyContact employeeEmergencyContact)
+        [Route("Employees/Details/{employeeId:guid}/EmergencyContacts/Edit/{emergencyContactId:int}")]
+        public async Task<IActionResult> Edit(string employeeId, int emergencyContactId, [Bind("Id,EmployeeId,FirstName,LastName,PhoneNumber,Email,PhoneType,RelationshipToEmployee")] EmployeeEmergencyContact employeeEmergencyContact)
         {
-            if (id != employeeEmergencyContact.Id)
+            if (employeeId != employeeEmergencyContact.EmployeeId && emergencyContactId == employeeEmergencyContact.Id)
             {
                 return NotFound();
             }
@@ -102,7 +95,7 @@ namespace EmployeeWebApplication.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeEmergencyContactExists(employeeEmergencyContact.Id))
+                    if (!await EmployeeEmergencyContactExistsAsync(employeeId, emergencyContactId))
                     {
                         return NotFound();
                     }
@@ -111,21 +104,18 @@ namespace EmployeeWebApplication.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new
+                {
+                    employeeId
+                });
             }
             return View(employeeEmergencyContact);
         }
 
-        // GET: EmployeeEmergencyContacts/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [Route("Employees/Details/{employeeId:guid}/EmergencyContacts/Delete/{emergencyContactId:int}")]
+        public async Task<IActionResult> Delete(string employeeId, int emergencyContactId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var employeeEmergencyContact = await _context.EmployeeEmergencyContact
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var employeeEmergencyContact = await LoadEmployeeEmergencyContactAsync(employeeId, emergencyContactId);
             if (employeeEmergencyContact == null)
             {
                 return NotFound();
@@ -134,20 +124,37 @@ namespace EmployeeWebApplication.Controllers
             return View(employeeEmergencyContact);
         }
 
-        // POST: EmployeeEmergencyContacts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [Route("Employees/Details/{employeeId:guid}/EmergencyContacts/Delete/{emergencyContactId:int}")]
+        public async Task<IActionResult> DeleteConfirmed(string employeeId, int emergencyContactId)
         {
-            var employeeEmergencyContact = await _context.EmployeeEmergencyContact.FindAsync(id);
+            var employeeEmergencyContact = await LoadEmployeeEmergencyContactAsync(employeeId, emergencyContactId);
             _context.EmployeeEmergencyContact.Remove(employeeEmergencyContact);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new
+            {
+                employeeId
+            });
         }
 
-        private bool EmployeeEmergencyContactExists(int id)
+        private async Task<bool> EmployeeEmergencyContactExistsAsync(string employeeId, int emergencyContactId)
         {
-            return _context.EmployeeEmergencyContact.Any(e => e.Id == id);
+            return await _context.EmployeeEmergencyContact
+                .AnyAsync(contact => contact.EmployeeId == employeeId && contact.Id == emergencyContactId);
+        }
+
+        private async Task<EmployeeEmergencyContact> LoadEmployeeEmergencyContactAsync(string employeeId, int emergencyContactId)
+        {
+            var employeeEmergencyContact = await _context.EmployeeEmergencyContact
+                .FirstOrDefaultAsync(contact => contact.EmployeeId == employeeId && contact.Id == emergencyContactId);
+
+            if (employeeEmergencyContact == null)
+            {
+                return null;
+            }
+
+            return employeeEmergencyContact;
         }
     }
 }

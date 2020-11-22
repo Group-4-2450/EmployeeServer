@@ -8,7 +8,7 @@
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>EmployeeEmergencyContact</h4>
+    <h4>Employee Emergency Contact</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -52,6 +52,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index" asp-route-employeeId="@Html.ValueFor(model => model.EmployeeId)">Back to List</a>
     </form>
 </div>
