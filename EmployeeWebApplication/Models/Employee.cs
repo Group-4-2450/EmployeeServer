@@ -25,6 +25,7 @@ namespace EmployeeWebApplication.Models
         [DisplayName("SSN")]
         public string Ssn { get; set; }
 
+        [DataType(DataType.Date)]
         [DisplayName("Birth Date")]
         public DateTime BirthDate { get; set; }
 
@@ -33,6 +34,7 @@ namespace EmployeeWebApplication.Models
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double? Wage { get; set; }
 
+        [DataType(DataType.Date)]
         [DisplayName("Start Date")]
         public DateTime StartDate { get; set; }
 
