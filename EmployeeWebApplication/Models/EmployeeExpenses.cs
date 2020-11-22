@@ -6,6 +6,8 @@ namespace EmployeeWebApplication.Models
     {
         public int Id { get; set; }
 
+        public string EmployeeId { get; set; }
+
         public Employee Employee { get; set; }
         
         public float Reimbursement { get; set; }

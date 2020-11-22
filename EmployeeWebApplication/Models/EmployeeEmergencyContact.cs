@@ -9,6 +9,8 @@ namespace EmployeeWebApplication.Models
 
         public string EmployeeId { get; set; }
 
+        public Employee Employee { get; set; }
+
         [DisplayName("First Name")]
         public string FirstName { get; set; }
 
