@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeWebApplication.Data;
 using EmployeeWebApplication.Models;
+using Microsoft.Extensions.Logging;
 
 namespace EmployeeWebApplication.Controllers
 {
@@ -20,31 +21,36 @@ namespace EmployeeWebApplication.Controllers
         }
 
         // GET: EmployeeExpenses
-        public async Task<IActionResult> Index()
+        [Route("Employees/Details/{employeeId:guid}/EmployeeExpenses")]
+        public async Task<IActionResult> Index(string employeeId)
         {
-            return View(await _context.EmployeeExpenses.ToListAsync());
+            var emergencyContacts = await _context.EmployeeExpenses
+                .Where(contact => contact.EmployeeId == employeeId)
+                .ToListAsync();
+
+            ViewBag.EmployeeId = employeeId;
+            return View(emergencyContacts);
         }
+
 
         // GET: EmployeeExpenses/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [Route("Employees/Details/{employeeId:guid}/EmployeeExpenses/Details/{employeeExpenseId:int}")]
+        public async Task<IActionResult> Details(string employeeId, int employeeExpenseId)
         {
-            if (id == null)
+
+            var employeeExpenseReport = await LoadEmployeeExpenseAsync(employeeId, employeeExpenseId);
+            if (employeeExpenseReport == null)
             {
                 return NotFound();
             }
 
-            var employeeExpenses = await _context.EmployeeExpenses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (employeeExpenses == null)
-            {
-                return NotFound();
-            }
-
-            return View(employeeExpenses);
+            return View(employeeExpenseReport);
         }
 
+
         // GET: EmployeeExpenses/Create
-        public IActionResult Create()
+        [Route("Employees/Detials/{employeeId:guid}/EmployeeExpenses/Create")]
+        public IActionResult Create(string employeeId)
         {
             return View();
         }
@@ -54,31 +60,31 @@ namespace EmployeeWebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Reimbursement,CardNumber,CardEnabled,CurrentBalance")] EmployeeExpenses employeeExpenses)
+        [Route("Employees/Detials/{employeeId:guid}/Expenses/Create")]
+        public async Task<IActionResult> Create(string employeeId, [Bind("Id,EmployeeId,Reimbursement,CardNumber,CardEnabled,CurrentBalance")] EmployeeExpenses employeeExpenses)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(employeeExpenses);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { 
+                    employeeId
+                });
             }
             return View(employeeExpenses);
         }
 
         // GET: EmployeeExpenses/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [Route("Employees/Details/{employeeId:guid}/Expenses/Edit/{employeeExpenseId:int}")]
+        public async Task<IActionResult> Edit(string employeeId, int employeeExpenseId)
         {
-            if (id == null)
+            var employeeExpenseReport = await LoadEmployeeExpenseAsync(employeeId, employeeExpenseId);
+            if (employeeExpenseReport == null)
             {
                 return NotFound();
             }
 
-            var employeeExpenses = await _context.EmployeeExpenses.FindAsync(id);
-            if (employeeExpenses == null)
-            {
-                return NotFound();
-            }
-            return View(employeeExpenses);
+            return View(employeeExpenseReport);
         }
 
         // POST: EmployeeExpenses/Edit/5
@@ -86,9 +92,10 @@ namespace EmployeeWebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Reimbursement,CardNumber,CardEnabled,CurrentBalance")] EmployeeExpenses employeeExpenses)
+        [Route("Employees/Details/{employeeId:guid}/EmployeeExpenses/Edit/{employeeExpenseId:int}")]
+        public async Task<IActionResult> Edit(string employeeId, int employeeExpenseId, [Bind("Id,EmployeeId,Reimbursement,CardNumber,CardEnabled,CurrentBalance")] EmployeeExpenses employeeExpenses)
         {
-            if (id != employeeExpenses.Id)
+            if (employeeId != employeeExpenses.EmployeeId && employeeExpenseId != employeeExpenses.Id)
             {
                 return NotFound();
             }
@@ -102,7 +109,7 @@ namespace EmployeeWebApplication.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeExpensesExists(employeeExpenses.Id))
+                    if (!await EmployeeEmergencyContactExistsAsync(employeeId, employeeExpenseId))
                     {
                         return NotFound();
                     }
@@ -111,43 +118,59 @@ namespace EmployeeWebApplication.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { 
+                    employeeId
+                });
             }
             return View(employeeExpenses);
         }
 
         // GET: EmployeeExpenses/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [Route("Employees/Details/{employeeId:guid}/EmployeeExpenses/Delete/{employeeExpenseId:int}")]
+        public async Task<IActionResult> Delete(string employeeId, int employeeExpenseId)
         {
-            if (id == null)
+            var employeeExpenseRecord = await LoadEmployeeExpenseAsync(employeeId, employeeExpenseId);
+
+            if (employeeExpenseRecord == null)
             {
                 return NotFound();
             }
 
-            var employeeExpenses = await _context.EmployeeExpenses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (employeeExpenses == null)
-            {
-                return NotFound();
-            }
-
-            return View(employeeExpenses);
+            return View(employeeExpenseRecord);
         }
 
         // POST: EmployeeExpenses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [Route("Employees/Details/{employeeId:guid}/EmployeeExpenses/Delete/{employeeExpenseId:int}")]
+        public async Task<IActionResult> DeleteConfirmed(string employeeId, int employeeExpenseId)
         {
-            var employeeExpenses = await _context.EmployeeExpenses.FindAsync(id);
+            var employeeExpenses = await LoadEmployeeExpenseAsync(employeeId, employeeExpenseId);
             _context.EmployeeExpenses.Remove(employeeExpenses);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction(nameof(Index),new {
+                employeeId
+            });
         }
 
-        private bool EmployeeExpensesExists(int id)
+        private async Task<bool> EmployeeEmergencyContactExistsAsync(string employeeId, int expenseid)
         {
-            return _context.EmployeeExpenses.Any(e => e.Id == id);
+            return await _context.EmployeeExpenses
+                   .AnyAsync(contact => contact.EmployeeId == employeeId && contact.Id == expenseid);
+        }
+
+        private async Task<EmployeeExpenses> LoadEmployeeExpenseAsync(string employeeId, int expenseId)
+        {
+            var employeeExpenseRecord = await _context.EmployeeExpenses
+                .FirstOrDefaultAsync(expense => expense.EmployeeId == employeeId && expense.Id == expenseId);
+
+            if (employeeExpenseRecord == null)
+            {
+                return null;
+            }
+
+            return employeeExpenseRecord;
         }
     }
 }

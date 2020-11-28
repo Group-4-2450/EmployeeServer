@@ -40,7 +40,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" asp-route-employeeId="@Html.ValueFor(model => model.EmployeeId)">Cancel</a>
 </div>
 
 @section Scripts {

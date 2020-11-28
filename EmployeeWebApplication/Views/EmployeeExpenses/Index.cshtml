@@ -2,12 +2,13 @@
 
 @{
     ViewData["Title"] = "Index";
+    string EmployeeId = ViewBag.EmployeeId;
 }
 
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" asp-route-employeeId="@EmployeeId">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -43,11 +44,14 @@
                 @Html.DisplayFor(modelItem => item.CurrentBalance)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-employeeId="@EmployeeId", asp-route-employeeExpenseId="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-employeeId="@EmployeeId", asp-route-employeeExpenseId="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-employeeId="@EmployeeId", asp-route-employeeExpenseId="@item.Id">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+<div>
+    <a asp-controller="Employees" asp-action="Details" asp-route-id="@EmployeeId">Back to Employee</a>
+</div>
