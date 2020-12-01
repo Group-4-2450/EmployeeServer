@@ -135,8 +135,6 @@ namespace EmployeeWebApplication
 
             string[] roles = { "Execuite", "Management", "HumanResources", "Employee"};
 
-            IdentityResult identityResult;
-
             foreach(var role in roles)
             {
                 if(!await roleManager.RoleExistsAsync(role))
