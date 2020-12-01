@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace EmployeeWebApplication
 {
@@ -79,7 +81,7 @@ namespace EmployeeWebApplication
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<IdentityRole> roleManager, UserManager<Employee> userManager)
+        public void Configure(IServiceProvider serviceProvider, IApplicationBuilder app, IWebHostEnvironment env, RoleManager<IdentityRole> roleManager, UserManager<Employee> userManager)
         {
             PerformMigrations(app);
 
@@ -112,6 +114,7 @@ namespace EmployeeWebApplication
             });
 
             DatabaseSeeder.SeedDataAsync(roleManager, userManager).Wait();
+            CreateRolesAsync(serviceProvider).Wait();
         }
 
         static void PerformMigrations(IApplicationBuilder app)
@@ -123,6 +126,24 @@ namespace EmployeeWebApplication
             using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
 
             context.Database.Migrate();
+        }
+
+        private async Task CreateRolesAsync(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<Employee>>();
+
+            string[] roles = { "Execuite", "Management", "HumanResources", "Employee"};
+
+            IdentityResult identityResult;
+
+            foreach(var role in roles)
+            {
+                if(!await roleManager.RoleExistsAsync(role))
+                {
+                    _ = await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
         }
     }
 }
