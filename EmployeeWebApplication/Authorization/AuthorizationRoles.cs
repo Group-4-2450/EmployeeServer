@@ -2,9 +2,9 @@
 {
     public class AuthorizationRoles
     {
-        public static readonly string ExecutivesRole = "Executives";
-        public static readonly string ManagersRole = "Managers";
-        public static readonly string HumanResourcesRole = "HumanResources";
-        public static readonly string EmployeeRole = "Employee";
+        public const string ExecutivesRole = "Executive";
+        public const string ManagersRole = "Management";
+        public const string HumanResourcesRole = "HumanResources";
+        public const string EmployeeRole = "Employee";
     }
 }

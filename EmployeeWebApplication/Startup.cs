@@ -67,6 +67,9 @@ namespace EmployeeWebApplication
                 options.SlidingExpiration = true;
             });
 
+            services.AddScoped<IAuthorizationHandler, EmployeesAuthorizationHandler>();
+            services.AddScoped<IAuthorizationHandler, EmployeeEmergencyContactAuthorizationHandler>();
+
             services.AddAuthorization(options =>
             {
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -74,8 +77,7 @@ namespace EmployeeWebApplication
                 .Build();
             });
 
-            services.AddScoped<IAuthorizationHandler, EmployeesAuthorizationHandler>();
-
+            services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
@@ -88,7 +90,7 @@ namespace EmployeeWebApplication
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
             }
             else
             {
@@ -125,12 +127,6 @@ namespace EmployeeWebApplication
             using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
 
             context.Database.Migrate();
-        }
-
-        private async Task CreateRolesAsync(IServiceProvider serviceProvider)
-        {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<Employee>>();
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿@model IEnumerable<EmployeeWebApplication.Models.EmployeeEmergencyContact>
+﻿@using Microsoft.AspNetCore.Authorization
+@using EmployeeWebApplication.Authorization
+@inject IAuthorizationService _authorizationService
+@model IEnumerable<EmployeeWebApplication.Models.EmployeeEmergencyContact>
 
 @{
     ViewData["Title"] = "Index";
@@ -7,9 +10,14 @@
 
 <h1>Emergency Contacts</h1>
 
-<p>
-    <a asp-action="Create" asp-route-employeeId="@EmployeeId">Create New</a>
-</p>
+@{
+    if ((await _authorizationService.AuthorizeAsync(User, new EmployeeEmergencyContact(), EmployeeEmergencyContactOperations.Create)).Succeeded)
+    {
+        <p>
+            <a asp-action="Create" asp-route-employeeId="@EmployeeId">Create New</a>
+        </p>
+    }
+}
 <table class="table">
     <thead>
         <tr>
@@ -35,33 +43,45 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RelationshipToEmployee)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-employeeId="@EmployeeId" asp-route-emergencyContactId="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-employeeId="@EmployeeId" asp-route-emergencyContactId="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-employeeId="@EmployeeId" asp-route-emergencyContactId="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RelationshipToEmployee)
+                </td>
+                <td>
+                    @{
+                        if ((await _authorizationService.AuthorizeAsync(User, item, EmployeeEmergencyContactOperations.Update)).Succeeded)
+                        {
+                            <a asp-action="Edit" asp-route-employeeId="@EmployeeId" asp-route-emergencyContactId="@item.Id">Edit</a>
+                        }
+                        if ((await _authorizationService.AuthorizeAsync(User, item, EmployeeEmergencyContactOperations.Update)).Succeeded)
+                        {
+                            <a asp-action="Details" asp-route-employeeId="@EmployeeId" asp-route-emergencyContactId="@item.Id">Details</a>
+                        }
+                        if ((await _authorizationService.AuthorizeAsync(User, item, EmployeeEmergencyContactOperations.Update)).Succeeded)
+                        {
+                            <a asp-action="Delete" asp-route-employeeId="@EmployeeId" asp-route-emergencyContactId="@item.Id">Delete</a>
+                        }
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <div>

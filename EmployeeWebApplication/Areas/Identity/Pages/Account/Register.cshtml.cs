@@ -14,10 +14,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using EmployeeWebApplication.Authorization;
 
 namespace EmployeeWebApplication.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    [Authorize(Roles = AuthorizationRoles.HumanResourcesRole)]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<Employee> _signInManager;

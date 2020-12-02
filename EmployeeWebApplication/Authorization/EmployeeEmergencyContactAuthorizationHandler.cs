@@ -1,21 +1,21 @@
-﻿using System.Threading.Tasks;
-using EmployeeWebApplication.Models;
+﻿using EmployeeWebApplication.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace EmployeeWebApplication.Authorization
 {
-    public class EmployeesAuthorizationHandler : AuthorizationHandler<OperationAuthorizationRequirement, Employee>
+    public class EmployeeEmergencyContactAuthorizationHandler : AuthorizationHandler<OperationAuthorizationRequirement, EmployeeEmergencyContact>
     {
         readonly UserManager<Employee> _userManager;
 
-        public EmployeesAuthorizationHandler(UserManager<Employee> userManager)
+        public EmployeeEmergencyContactAuthorizationHandler(UserManager<Employee> userManager)
         {
             _userManager = userManager;
         }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement requirement, Employee resource)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement requirement, EmployeeEmergencyContact resource)
         {
             if (context.User == null)
             {
@@ -24,7 +24,7 @@ namespace EmployeeWebApplication.Authorization
 
             if (context.User.IsInRole(AuthorizationRoles.ExecutivesRole))
             {
-                if (requirement == EmployeeOperations.Read)
+                if (requirement == EmployeeEmergencyContactOperations.Read)
                 {
                     context.Succeed(requirement);
                     return Task.CompletedTask;
@@ -33,7 +33,7 @@ namespace EmployeeWebApplication.Authorization
 
             if (context.User.IsInRole(AuthorizationRoles.ManagersRole))
             {
-                if (requirement == EmployeeOperations.Read)
+                if (requirement == EmployeeEmergencyContactOperations.Read)
                 {
                     context.Succeed(requirement);
                     return Task.CompletedTask;
@@ -42,15 +42,19 @@ namespace EmployeeWebApplication.Authorization
 
             if (context.User.IsInRole(AuthorizationRoles.HumanResourcesRole))
             {
-                context.Succeed(requirement);
-                return Task.CompletedTask;
+                if (requirement == EmployeeEmergencyContactOperations.Read)
+                {
+                    context.Succeed(requirement);
+                    return Task.CompletedTask;
+                }
             }
 
-            if (context.User.IsInRole(AuthorizationRoles.EmployeeRole) && resource != null)
+            if (context.User.IsInRole(AuthorizationRoles.EmployeeRole))
             {
-                var isCurrentUser = resource.Id == _userManager.GetUserId(context.User);
+                var creatingNew = resource.Id == default && requirement == EmployeeEmergencyContactOperations.Create;
+                var updatingOwn = resource != null && resource.EmployeeId == _userManager.GetUserId(context.User);
 
-                if (isCurrentUser && (requirement == EmployeeOperations.Read || requirement == EmployeeOperations.ListExpenses))
+                if (creatingNew || updatingOwn)
                 {
                     context.Succeed(requirement);
                     return Task.CompletedTask;

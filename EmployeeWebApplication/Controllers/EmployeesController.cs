@@ -1,21 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EmployeeWebApplication.Authorization;
 using EmployeeWebApplication.Data;
 using EmployeeWebApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace EmployeeWebApplication.Controllers
 {
+
     public class EmployeesController : Controller
     {
+        private readonly IAuthorizationService _authorizationService;
         private readonly ApplicationDbContext _context;
         private readonly ILogger<EmployeesController> _logger;
 
-        public EmployeesController(ApplicationDbContext context, ILogger<EmployeesController> logger)
+        public EmployeesController(
+            IAuthorizationService authorizationService,
+            ApplicationDbContext context,
+            ILogger<EmployeesController> logger
+        )
         {
+            _authorizationService = authorizationService;
             _context = context;
             _logger = logger;
         }
@@ -23,7 +33,22 @@ namespace EmployeeWebApplication.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
+            var users = await _context.Users.ToListAsync();
+
+            var filteredUsers = new List<Employee>();
+
+            foreach (var user in users)
+            {
+                var authorizationStatus = await _authorizationService
+                    .AuthorizeAsync(User, user, EmployeeOperations.Read);
+
+                if (authorizationStatus.Succeeded)
+                {
+                    filteredUsers.Add(user);
+                }
+            }
+
+            return View(filteredUsers);
         }
 
         // GET: Employees/Details/5
@@ -34,20 +59,39 @@ namespace EmployeeWebApplication.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var employee = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
                 return NotFound();
             }
 
-            return View(employee);
+            var authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, employee, EmployeeOperations.Read);
+
+            if (authorizationResult.Succeeded)
+            {
+                return View(employee);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: Employees/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, new Employee(), EmployeeOperations.Create);
+
+            if (authorizationResult.Succeeded)
+            {
+                return View();
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: Employees/Create
@@ -55,19 +99,30 @@ namespace EmployeeWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EmployeeEditViewModel employeeEdits)
         {
-            if (ModelState.IsValid)
+            var authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, new Employee(), EmployeeOperations.Create);
+
+            if (authorizationResult.Succeeded)
             {
-                employeeEdits.Id = Guid.NewGuid().ToString();
+                if (ModelState.IsValid)
+                {
+                    employeeEdits.Id = Guid.NewGuid().ToString();
 
-                var employee = new Employee();
-                employeeEdits.ApplyTo(employee);
+                    var employee = new Employee();
+                    employeeEdits.ApplyTo(employee);
 
-                _context.Add(employee);
-                await _context.SaveChangesAsync();
+                    _context.Add(employee);
+                    await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(employeeEdits);
             }
-            return View(employeeEdits);
+            else
+            {
+                return Forbid();
+            }
+
         }
 
         // GET: Employees/Edit/5
@@ -83,7 +138,18 @@ namespace EmployeeWebApplication.Controllers
             {
                 return NotFound();
             }
-            return View(new EmployeeEditViewModel(employee));
+
+            var authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, employee, EmployeeOperations.Update);
+
+            if (authorizationResult.Succeeded)
+            {
+                return View(new EmployeeEditViewModel(employee));
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: Employees/Edit/5
@@ -101,10 +167,21 @@ namespace EmployeeWebApplication.Controllers
                 try
                 {
                     var employee = await _context.Users.FindAsync(id);
-                    employeeEdits.ApplyTo(employee);
 
-                    _context.Update(employee);
-                    await _context.SaveChangesAsync();
+                    var authorizationResult = await _authorizationService
+                        .AuthorizeAsync(User, employee, EmployeeOperations.Update);
+
+                    if (authorizationResult.Succeeded)
+                    {
+                        employeeEdits.ApplyTo(employee);
+
+                        _context.Update(employee);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        return Forbid();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -138,7 +215,17 @@ namespace EmployeeWebApplication.Controllers
                 return NotFound();
             }
 
-            return View(employee);
+            var authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, employee, EmployeeOperations.Delete);
+
+            if (authorizationResult.Succeeded)
+            {
+                return View(employee);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: Employees/Delete/5
@@ -147,9 +234,20 @@ namespace EmployeeWebApplication.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var employee = await _context.Users.FindAsync(id);
-            _context.Users.Remove(employee);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            var authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, employee, EmployeeOperations.Delete);
+
+            if (authorizationResult.Succeeded)
+            {
+                _context.Users.Remove(employee);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         private bool EmployeeExists(string id)
