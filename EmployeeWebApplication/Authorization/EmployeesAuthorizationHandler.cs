@@ -24,7 +24,7 @@ namespace EmployeeWebApplication.Authorization
 
             if (context.User.IsInRole(AuthorizationRoles.ExecutivesRole))
             {
-                if (requirement == EmployeeOperations.Read)
+                if (requirement == EmployeeOperations.Read || requirement == EmployeeOperations.DownloadAllEmployees)
                 {
                     context.Succeed(requirement);
                     return Task.CompletedTask;
