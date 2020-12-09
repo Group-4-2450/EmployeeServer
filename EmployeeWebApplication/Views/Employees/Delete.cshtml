@@ -1,4 +1,7 @@
 ﻿@model EmployeeWebApplication.Models.Employee
+@using Microsoft.AspNetCore.Authorization
+@using EmployeeWebApplication.Authorization
+@inject IAuthorizationService _authorizationService
 
 @{
     ViewData["Title"] = "Delete";
@@ -86,10 +89,16 @@
         </dd>
     </dl>
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="hidden" asp-for="ConcurrencyStamp" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+    @{
+        if ((await _authorizationService.AuthorizeAsync(User, Model, EmployeeOperations.Delete)).Succeeded)
+        {
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ConcurrencyStamp" />
+                <input type="submit" value="Delete" class="btn btn-danger" /> |
+                <a asp-action="Index">Back to List</a>
+            </form>
+        }
+    }
+
 </div>

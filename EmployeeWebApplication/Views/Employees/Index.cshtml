@@ -7,16 +7,26 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Employees</h1>
+<div>
+    <h1>Employees</h1>
 
-@{
-    if ((await _authorizationService.AuthorizeAsync(User, new Employee(), EmployeeOperations.Create)).Succeeded)
-    {
-        <p>
-            <a asp-action="Create">Create New</a>
-        </p>
+    @{
+        if ((await _authorizationService.AuthorizeAsync(User, new Employee(), EmployeeOperations.Create)).Succeeded)
+        {
+            <p>
+                <button asp-action="Create">Create New Employee</button>
+            </p>
+        }
+
+        if ((await _authorizationService.AuthorizeAsync(User, new Employee(), EmployeeOperations.DownloadAllEmployees)).Succeeded)
+        {
+            <p>
+                <button asp-action="DownloadAll">Export Database</button>
+            </p>
+        }
+    
     }
-}
+</div>
 
 <table class="table">
     <thead>
@@ -68,7 +78,8 @@
                     @{
                         if ((await _authorizationService.AuthorizeAsync(User, item, EmployeeOperations.Update)).Succeeded)
                         {
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <button asp-action="edit" asp-route-id="@item.Id">Edit</button>
+                            @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a>*@
                         }
 
                         if ((await _authorizationService.AuthorizeAsync(User, item, EmployeeOperations.Read)).Succeeded)
