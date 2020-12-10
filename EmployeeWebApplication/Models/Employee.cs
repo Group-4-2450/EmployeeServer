@@ -52,9 +52,6 @@ namespace EmployeeWebApplication.Models
         [DisplayName("Payment Information")]
         public string PaymentInformation { get; set; }
 
-        [DisplayName("Permission Group")]
-        public string Role { get; set; }
-
         public Gender Gender { get; set; }
     }
 }

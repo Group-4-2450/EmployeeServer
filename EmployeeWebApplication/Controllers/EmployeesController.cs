@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity;
 
 namespace EmployeeWebApplication.Controllers
 {
@@ -18,13 +19,15 @@ namespace EmployeeWebApplication.Controllers
         private readonly IAuthorizationService _authorizationService;
         private readonly ApplicationDbContext _context;
         private readonly ILogger<EmployeesController> _logger;
+        private readonly UserManager<Employee> _userManager;
 
-        public EmployeesController(
+        public EmployeesController(UserManager<Employee> userManager,
             IAuthorizationService authorizationService,
             ApplicationDbContext context,
             ILogger<EmployeesController> logger
         )
         {
+            _userManager = userManager;
             _authorizationService = authorizationService;
             _context = context;
             _logger = logger;
@@ -82,7 +85,7 @@ namespace EmployeeWebApplication.Controllers
         public async Task<IActionResult> Create()
         {
             var authorizationResult = await _authorizationService
-                .AuthorizeAsync(User, new Employee(), EmployeeOperations.Create);
+                .AuthorizeAsync(User, new Employee(), EmployeeOperations.Create);            
 
             if (authorizationResult.Succeeded)
             {
