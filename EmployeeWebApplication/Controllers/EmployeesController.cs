@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 
 namespace EmployeeWebApplication.Controllers
 {
@@ -100,7 +101,7 @@ namespace EmployeeWebApplication.Controllers
         // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EmployeeEditViewModel employeeEdits)
+        public async Task<IActionResult> Create(EmployeeEditViewModel employeeEdits, IFormCollection form)
         {
             var authorizationResult = await _authorizationService
                 .AuthorizeAsync(User, new Employee(), EmployeeOperations.Create);
@@ -116,6 +117,10 @@ namespace EmployeeWebApplication.Controllers
 
                     _context.Add(employee);
                     await _context.SaveChangesAsync();
+
+                    string role = Request.Form["Role"].ToString();
+                    
+                    var addRole = await _userManager.AddToRoleAsync(employee, role);
 
                     return RedirectToAction(nameof(Index));
                 }
