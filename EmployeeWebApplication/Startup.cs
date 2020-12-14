@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace EmployeeWebApplication
 {
@@ -65,6 +67,9 @@ namespace EmployeeWebApplication
                 options.SlidingExpiration = true;
             });
 
+            services.AddScoped<IAuthorizationHandler, EmployeesAuthorizationHandler>();
+            services.AddScoped<IAuthorizationHandler, EmployeeEmergencyContactAuthorizationHandler>();
+
             services.AddAuthorization(options =>
             {
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -72,21 +77,20 @@ namespace EmployeeWebApplication
                 .Build();
             });
 
-            services.AddScoped<IAuthorizationHandler, EmployeesAuthorizationHandler>();
-
+            services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<IdentityRole> roleManager, UserManager<Employee> userManager)
+        public void Configure(IServiceProvider serviceProvider, IApplicationBuilder app, IWebHostEnvironment env, RoleManager<IdentityRole> roleManager, UserManager<Employee> userManager)
         {
             PerformMigrations(app);
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
             }
             else
             {

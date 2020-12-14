@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeWebApplication.Data;
 using EmployeeWebApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EmployeeWebApplication.Controllers
 {

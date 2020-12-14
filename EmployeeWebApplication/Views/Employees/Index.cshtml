@@ -1,15 +1,28 @@
-﻿@model IEnumerable<EmployeeWebApplication.Models.Employee>
-
+﻿@using Microsoft.AspNetCore.Authorization
+@using EmployeeWebApplication.Authorization
+@inject IAuthorizationService _authorizationService
+@model IEnumerable<EmployeeWebApplication.Models.Employee>
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Employees</h1>
+<div>
+    <h1>Employees</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+    @{
+        if ((await _authorizationService.AuthorizeAsync(User, new Employee(), EmployeeOperations.Create)).Succeeded)
+        {
+            <a class="inline" asp-action="Create">Create</a>
+        }
+
+        if ((await _authorizationService.AuthorizeAsync(User, new Employee(), EmployeeOperations.DownloadAllEmployees)).Succeeded)
+        {
+            <a class="inline" asp-action="Export Database">Export Database</a>
+        }
+    }
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -57,9 +70,22 @@
                     @Html.DisplayFor(modelItem => item.PhoneNumber)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    @{
+                        if ((await _authorizationService.AuthorizeAsync(User, item, EmployeeOperations.Update)).Succeeded)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        }
+
+                        if ((await _authorizationService.AuthorizeAsync(User, item, EmployeeOperations.Read)).Succeeded)
+                        {
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        }
+
+                        if ((await _authorizationService.AuthorizeAsync(User, item, EmployeeOperations.Delete)).Succeeded)
+                        {
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        }
+                    }
                 </td>
             </tr>
         }

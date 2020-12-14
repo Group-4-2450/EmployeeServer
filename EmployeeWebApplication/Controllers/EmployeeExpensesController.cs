@@ -8,15 +8,20 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeWebApplication.Data;
 using EmployeeWebApplication.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using EmployeeWebApplication.Authorization;
 
 namespace EmployeeWebApplication.Controllers
 {
+    
     public class EmployeeExpensesController : Controller
     {
+        private readonly IAuthorizationService _authorizationService;
         private readonly ApplicationDbContext _context;
 
-        public EmployeeExpensesController(ApplicationDbContext context)
+        public EmployeeExpensesController(IAuthorizationService authorizationService, ApplicationDbContext context)
         {
+            _authorizationService = authorizationService;
             _context = context;
         }
 
@@ -24,14 +29,23 @@ namespace EmployeeWebApplication.Controllers
         [Route("Employees/Details/{employeeId:guid}/EmployeeExpenses")]
         public async Task<IActionResult> Index(string employeeId)
         {
-            var emergencyContacts = await _context.EmployeeExpenses
-                .Where(contact => contact.EmployeeId == employeeId)
-                .ToListAsync();
+            var authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, _context.Users.Find(employeeId), EmployeeOperations.ListExpenses);
 
-            ViewBag.EmployeeId = employeeId;
-            return View(emergencyContacts);
+            if (authorizationResult.Succeeded)
+            {
+                var employeeExpenses = await _context.EmployeeExpenses
+                    .Where(contact => contact.EmployeeId == employeeId)
+                    .ToListAsync();
+
+                ViewBag.EmployeeId = employeeId;
+                return View(employeeExpenses);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
-
 
         // GET: EmployeeExpenses/Details/5
         [Route("Employees/Details/{employeeId:guid}/EmployeeExpenses/Details/{employeeExpenseId:int}")]
@@ -49,7 +63,7 @@ namespace EmployeeWebApplication.Controllers
 
 
         // GET: EmployeeExpenses/Create
-        [Route("Employees/Detials/{employeeId:guid}/EmployeeExpenses/Create")]
+        [Route("Employees/Details/{employeeId:guid}/EmployeeExpenses/Create")]
         public IActionResult Create(string employeeId)
         {
             return View();
@@ -60,7 +74,7 @@ namespace EmployeeWebApplication.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Employees/Detials/{employeeId:guid}/Expenses/Create")]
+        [Route("Employees/Details/{employeeId:guid}/EmployeeExpenses/Create")]
         public async Task<IActionResult> Create(string employeeId, [Bind("Id,EmployeeId,Reimbursement,CardNumber,CardEnabled,CurrentBalance")] EmployeeExpenses employeeExpenses)
         {
             if (ModelState.IsValid)
@@ -75,7 +89,7 @@ namespace EmployeeWebApplication.Controllers
         }
 
         // GET: EmployeeExpenses/Edit/5
-        [Route("Employees/Details/{employeeId:guid}/Expenses/Edit/{employeeExpenseId:int}")]
+        [Route("Employees/Details/{employeeId:guid}/EmployeeExpenses/Edit/{employeeExpenseId:int}")]
         public async Task<IActionResult> Edit(string employeeId, int employeeExpenseId)
         {
             var employeeExpenseReport = await LoadEmployeeExpenseAsync(employeeId, employeeExpenseId);

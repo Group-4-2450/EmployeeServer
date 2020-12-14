@@ -45,6 +45,8 @@ namespace EmployeeWebApplication.Models
         [DisplayName("Payment Information")]
         public string PaymentInformation { get; set; }
 
+        public string Role { get; set; }
+
         public Gender Gender { get; set; }
 
         public EmployeeEditViewModel()
@@ -68,6 +70,7 @@ namespace EmployeeWebApplication.Models
             HomeAddress = employee.HomeAddress;
             PaymentInformation = employee.PaymentInformation;
             Gender = employee.Gender;
+            Role = employee.Role;
         }
 
         public void ApplyTo(Employee employee)
@@ -86,6 +89,7 @@ namespace EmployeeWebApplication.Models
             employee.HomeAddress = HomeAddress;
             employee.PaymentInformation = PaymentInformation;
             employee.Gender = Gender;
+            employee.Role = Role;
         }
     }
 }

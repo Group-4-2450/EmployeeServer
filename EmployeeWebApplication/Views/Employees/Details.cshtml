@@ -1,4 +1,7 @@
-﻿@model EmployeeWebApplication.Models.Employee
+﻿@using Microsoft.AspNetCore.Authorization
+@model EmployeeWebApplication.Models.Employee
+@using EmployeeWebApplication.Authorization
+@inject IAuthorizationService _authorizationService
 
 @{
     ViewData["Title"] = "Details";
@@ -9,7 +12,7 @@
 
 <div>
     <h4>Employee</h4>
-    <hr />
+    <hr /> 
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.EmployeeId)
@@ -86,8 +89,20 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-controller="EmployeeEmergencyContacts" asp-action="Index" asp-route-employeeId="@Html.ValueFor(model => model.Id)">Emergency Contacts</a> |
-    <a asp-controller="EmployeeExpenses" asp-action="Index" asp-route-employeeId ="@Html.ValueFor(model => model.Id)">Expense Report</a> |
+    @{
+        if ((await _authorizationService.AuthorizeAsync(User, Model, EmployeeOperations.Update)).Succeeded)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        }
+
+        <a asp-controller="EmployeeEmergencyContacts" asp-action="Index" asp-route-employeeId="@Html.ValueFor(model => model.Id)">Emergency Contacts</a>
+
+        if ((await _authorizationService.AuthorizeAsync(User, Model, EmployeeExpensesOperations.Read)).Succeeded)
+        {
+            <a asp-controller="EmployeeExpenses" asp-action="Index" asp-route-employeeId="@Html.ValueFor(model => model.Id)">Expense Report</a>
+        }
+
+    }
+
     <a asp-action="Index">Back to List</a>
 </div>
