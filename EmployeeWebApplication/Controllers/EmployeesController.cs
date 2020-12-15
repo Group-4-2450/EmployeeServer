@@ -39,7 +39,10 @@ namespace EmployeeWebApplication.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .OrderBy(user => user.LastName.ToLower())
+                .ThenBy(user => user.FirstName.ToLower())
+                .ToListAsync();
 
             var filteredUsers = new List<Employee>();
 
