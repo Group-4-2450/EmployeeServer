@@ -18,7 +18,7 @@
 
         if ((await _authorizationService.AuthorizeAsync(User, new Employee(), EmployeeOperations.DownloadAllEmployees)).Succeeded)
         {
-            <a class="inline" asp-action="Export Database">Export Database</a>
+            <a class="inline" asp-action="Export">Export Database</a>
         }
     }
 </div>

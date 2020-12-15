@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
+using System.Text;
+using System.Net.Mime;
 
 namespace EmployeeWebApplication.Controllers
 {
@@ -37,7 +39,10 @@ namespace EmployeeWebApplication.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .OrderBy(user => user.LastName.ToLower())
+                .ThenBy(user => user.FirstName.ToLower())
+                .ToListAsync();
 
             var filteredUsers = new List<Employee>();
 
@@ -53,6 +58,23 @@ namespace EmployeeWebApplication.Controllers
             }
 
             return View(filteredUsers);
+        }
+
+        public async Task<IActionResult> Export()
+        {
+            var authorizationResult = await _authorizationService
+                .AuthorizeAsync(User, new Employee(), EmployeeOperations.DownloadAllEmployees);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
+
+            var exporter = new EmployeeExporter(_userManager);
+            var csv = await exporter.ExportAsCsvAsync(_context.Users);
+            var csvBytes = Encoding.UTF8.GetBytes(csv);
+
+            return File(csvBytes, "text/csv", "employees.csv");
         }
 
         // GET: Employees/Details/5
