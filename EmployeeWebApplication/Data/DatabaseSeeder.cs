@@ -35,43 +35,63 @@ namespace EmployeeWebApplication.Data
             {
                 new Employee
                 {
+                    EmployeeId = "1",
                     UserName = "admin@example.com",
                     Email = "admin@example.com",
                     EmailConfirmed = true,
                     FirstName = "Example",
-                    LastName = "Admin"
+                    LastName = "Admin",
+                    Title = "The Admin",
+                    BirthDate = DateTime.Now.AddYears(-50),
+                    StartDate = DateTime.Now.AddYears(-5),
                 },
                 new Employee
                 {
+                    EmployeeId = "2",
                     UserName = "executive@example.com",
                     Email = "executive@example.com",
                     EmailConfirmed = true,
                     FirstName = "executive",
-                    LastName = "executive"
+                    LastName = "executive",
+                    Title = "The Executive",
+                    BirthDate = DateTime.Now.AddYears(-42),
+                    StartDate = DateTime.Now.AddYears(-4),
                 },
                 new Employee 
                 {
+                    EmployeeId = "3",
                     UserName = "hr@example.com",
                     Email = "hr@example.com",
                     EmailConfirmed = true,
                     FirstName = "human",
-                    LastName = "resources"
+                    LastName = "resources",
+                    Title = "The Killer of Fun",
+                    BirthDate = DateTime.Now.AddYears(-26),
+                    StartDate = DateTime.Now.AddYears(-3),
                 },
                 new Employee
                 {
+                    EmployeeId = "4",
                     UserName = "manager@example.com",
                     Email = "manager@example.com",
                     EmailConfirmed = true,
                     FirstName = "manager",
-                    LastName = "dude"
+                    LastName = "dude",
+                    Title = "The Party Pooper",
+                    BirthDate = DateTime.Now.AddYears(-34),
+                    StartDate = DateTime.Now.AddYears(-2),
                 },
                 new Employee
                 {
+                    EmployeeId = "5",
                     UserName = "employee@example.com",
                     Email = "employee@example.com",
                     EmailConfirmed = true,
                     FirstName = "employee",
-                    LastName = "dude"
+                    LastName = "dude",
+                    Title = "The Would-be Haver of Fun",
+                    BirthDate = DateTime.Now.AddYears(-18),
+                    StartDate = DateTime.Now.AddYears(-1),
                 }
         };
 
@@ -88,10 +108,15 @@ namespace EmployeeWebApplication.Data
                 }
             }
             
-            var roleResultExec = await userManager.AddToRoleAsync(users[1], AuthorizationRoles.ExecutivesRole);
-            var roleResultHr = await userManager.AddToRoleAsync(users[2], AuthorizationRoles.HumanResourcesRole);
-            var roleResultManager = await userManager.AddToRoleAsync(users[3], AuthorizationRoles.ManagersRole);
-            var roleResultEmployee = await userManager.AddToRoleAsync(users[4], AuthorizationRoles.EmployeeRole);
+            await userManager.AddToRoleAsync(users[1], AuthorizationRoles.ExecutivesRole);
+            await userManager.AddToRoleAsync(users[2], AuthorizationRoles.HumanResourcesRole);
+            await userManager.AddToRoleAsync(users[3], AuthorizationRoles.ManagersRole);
+            await userManager.AddToRoleAsync(users[4], AuthorizationRoles.EmployeeRole);
+
+            await userManager.AddToRoleAsync(users[0], AuthorizationRoles.ExecutivesRole);
+            await userManager.AddToRoleAsync(users[0], AuthorizationRoles.HumanResourcesRole);
+            await userManager.AddToRoleAsync(users[0], AuthorizationRoles.ManagersRole);
+            await userManager.AddToRoleAsync(users[0], AuthorizationRoles.EmployeeRole);
         }
     }
 }
